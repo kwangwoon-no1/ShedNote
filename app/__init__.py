@@ -14,6 +14,8 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'  # 로그인 페이지로 리디렉션
 
+    from app.models import User
+
     # user_loader 함수 등록
     @login_manager.user_loader
     def load_user(user_id):
@@ -22,6 +24,9 @@ def create_app(config_class=Config):
     # 블루프린트 등록
     from app.routes import main
     app.register_blueprint(main)
+
+    with app.app_context():
+        db.create_all()
 
     return app
 

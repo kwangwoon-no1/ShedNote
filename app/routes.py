@@ -45,3 +45,25 @@ def timetable():
 @login_required
 def storage():
     return render_template('storage.html')
+
+# 회원가입 페이지
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        # 비밀번호 해싱 (보안을 위해 필요)
+        from werkzeug.security import generate_password_hash
+        hashed_password = generate_password_hash(password)
+
+        # 새로운 사용자 객체 생성 후 저장
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('회원가입이 완료되었습니다. 로그인 해주세요.', 'success')
+        return redirect(url_for('main.login'))  # 로그인 페이지로 리디렉션
+
+    return render_template('register.html', form=form)
