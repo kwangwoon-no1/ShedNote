@@ -1,6 +1,6 @@
 # routes.py
 from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import check_password_hash
 from app import db
 from app.models import User
@@ -16,6 +16,8 @@ def home():
 # 로그인 페이지
 @main.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.timetable'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
